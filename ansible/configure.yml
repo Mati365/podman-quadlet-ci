@@ -21,7 +21,6 @@
     - role: common/fish
     - role: common/fail2ban
     - role: common/node
-    - role: common/www
 
 - hosts: web
   tags: podman
@@ -33,3 +32,4 @@
   roles:
     - role: podman/packages
     - role: podman/skeleton
+    - role: podman/remove-dangling-images
