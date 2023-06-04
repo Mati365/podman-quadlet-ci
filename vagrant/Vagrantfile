@@ -1,0 +1,30 @@
+user = {
+  name: 'deploy',
+  key: File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+}
+
+bootstrap_script = <<-SHELL
+  groupadd wheel
+  useradd -m -G sudo,wheel -s /bin/bash #{user[:name]}
+  echo "%wheel ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+  touch ~#{user[:name]}/.hushlogin
+  mkdir -p ~#{user[:name]}/.ssh
+  echo #{user[:key]} > ~#{user[:name]}/.ssh/authorized_keys
+
+  chown -R #{user[:name]}:#{user[:name]} ~#{user[:name]}/.ssh
+  chmod 0700 ~#{user[:name]}/.ssh
+  chmod 0600 ~#{user[:name]}/.ssh/authorized_keys
+SHELL
+
+Vagrant.configure('2') do |config|
+  config.vm.define 'quadlet-app-vm' do |node|
+    node.vm.provider :libvirt do |provider|
+      provider.memory = 2048
+    end
+
+    node.vm.network :private_network, ip: '192.168.56.10'
+    node.vm.box = 'generic/debian11'
+    node.vm.provision 'shell', inline: bootstrap_script
+  end
+end
