@@ -20,4 +20,7 @@ local_paths:
     authorized: "{{ playbook_dir }}/../keys/ssh/authorized"
 
 remote_paths:
-  www: /var/www
+  www: /www
+
+podman:
+  volumes_path: "{{ remote_paths.www }}/volumes"

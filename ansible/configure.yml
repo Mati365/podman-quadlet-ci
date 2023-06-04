@@ -22,3 +22,14 @@
     - role: common/fail2ban
     - role: common/node
     - role: common/www
+
+- hosts: web
+  tags: podman
+  gather_facts: true
+  become: true
+  module_defaults:
+    apt:
+      install_recommends: no
+  roles:
+    - role: podman/packages
+    - role: podman/skeleton
