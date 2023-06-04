@@ -1,6 +1,8 @@
 # podman-quadlet-ci
 
-<img src="/doc/images/podman-logo.png" width="256" alt="Podman logo" />
+<p align="center">
+  <img src="/doc/images/podman-logo.png" width="256" alt="Podman logo" />
+</p>
 
 Podman quadlet CI deployment playground managed by using Ansible for simple applications
 
