@@ -35,15 +35,14 @@ if ${DELETE_VM}; then
 fi
 
 if ${RUN_VM}; then
-  # Start VMs
   (
     cd vagrant;
     vagrant up --parallel --destroy-on-error;
   )
 
-  # Run ansible configuration scripts
   (
     cd ansible;
-    ansible-playbook ./configure.yml -i ./inventory/dev/hosts.ini
+    ansible-galaxy install -r ./requirements.yml
+    ansible-playbook ./configure.yml -i ./inventory/local/hosts.ini
   )
 fi

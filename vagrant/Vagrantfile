@@ -1,6 +1,9 @@
 user = {
   name: 'deploy',
-  key: File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+  key: [
+    File.readlines('../keys/ssh/private/deploy/id_rsa.pub').first.strip,
+    File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+  ].join('\n')
 }
 
 bootstrap_script = <<-SHELL
@@ -9,6 +12,8 @@ bootstrap_script = <<-SHELL
   echo "%wheel ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
   touch ~#{user[:name]}/.hushlogin
+  chown #{user[:name]}:#{user[:name]} ~#{user[:name]}/.hushlogin
+
   mkdir -p ~#{user[:name]}/.ssh
   echo #{user[:key]} > ~#{user[:name]}/.ssh/authorized_keys
 
