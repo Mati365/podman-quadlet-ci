@@ -33,3 +33,13 @@
     - role: podman/packages
     - role: podman/skeleton
     - role: podman/remove-dangling-images
+
+- hosts: web
+  tags: app
+  gather_facts: true
+  become: true
+  module_defaults:
+    apt:
+      install_recommends: no
+  roles:
+    - role: app/deploy

@@ -14,5 +14,8 @@
 
 - name: Podman is present
   package:
-    name: podman
     state: present
+    name:
+      - podman
+      - uidmap
+      - dbus-x11

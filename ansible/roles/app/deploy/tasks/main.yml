@@ -1,0 +1,19 @@
+- name: Run Hello World app
+  containers.podman.podman_container:
+    name: hello-world
+    image: nginxdemos/hello:latest
+    state: started
+    ports:
+      - 8080:80
+    generate_systemd:
+      path: /etc/systemd/system
+      restart_policy: always
+      time: 120
+      names: true
+
+- name: Postgres container must be started and enabled on systemd
+  ansible.builtin.systemd:
+    name: container-hello-world
+    daemon_reload: yes
+    state: started
+    enabled: yes
