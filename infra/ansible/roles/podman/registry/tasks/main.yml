@@ -1,0 +1,60 @@
+- getent:
+    database: passwd
+
+- name: Ensure registry volume dir is present
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: deploy
+    group: webusers
+    mode: "0770"
+  loop:
+    - "{{ podman.volumes_path }}/registry"
+    - "{{ podman.volumes_path }}/registry/data"
+    - "{{ podman.volumes_path }}/registry/config"
+
+- name: Write htpasswd to registry
+  copy:
+    content: "{{ podman.registry.credentials.passwd }}"
+    dest: "{{ podman.volumes_path }}/registry/config/htpasswd"
+    owner: deploy
+    group: webusers
+    mode: "0744"
+
+- name: Run registry container
+  become_user: web
+  containers.podman.podman_container:
+    name: registry
+    image: registry
+    state: started
+    user: "{{ getent_passwd.web.1 }}"
+    ports:
+      - 5000:5000
+    generate_systemd:
+      path: ~/.config/systemd/user
+      restart_policy: always
+      time: 120
+      names: true
+    volume:
+      - "{{ podman.volumes_path }}/registry/data:/var/lib/registry"
+      - "{{ podman.volumes_path }}/registry/config/htpasswd:/auth/htpasswd"
+    env:
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+
+- name: Podman registry must be started and enabled on systemd
+  become_user: web
+  systemd:
+    name: container-registry
+    scope: user
+    enabled: true
+
+- name: Login deploy user to registry
+  become_user: "{{ item }}"
+  containers.podman.podman_login:
+    username: "{{ podman.registry.credentials.username }}"
+    password: "{{ podman.registry.credentials.password }}"
+  with_items:
+    - deploy
+    - web

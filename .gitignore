@@ -58,3 +58,4 @@ build-iPhoneSimulator/
 *.log
 
 id_rsa*
+registry-credentials.json

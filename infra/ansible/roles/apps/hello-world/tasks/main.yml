@@ -1,0 +1,21 @@
+- name: Run Hello World app
+  become_user: web
+  containers.podman.podman_container:
+    name: hello-world
+    image: crccheck/hello-world
+    state: started
+    user: '{{ getent_passwd.web.1 }}'
+    ports:
+      - 8080:8000
+    generate_systemd:
+      path: ~/.config/systemd/user
+      restart_policy: always
+      time: 120
+      names: true
+
+- name: Podman hello-world must be started and enabled on systemd
+  become_user: web
+  systemd:
+    name: container-hello-world
+    scope: user
+    enabled: true

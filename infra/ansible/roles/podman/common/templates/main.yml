@@ -1,0 +1,23 @@
+- name: Run Hello World app
+  become_user: web
+  containers.podman.podman_container:
+    name: hello-world
+    image: nginxdemos/hello:latest
+    state: started
+    user: '{{ getent_passwd.wb.1 }}'
+    ports:
+      - 8080:80
+    generate_systemd:
+      path: /etc/systemd/system
+      restart_policy: always
+      time: 120
+      names: true
+
+- name: Registry container must be started and enabled on systemd
+  become_user: web
+  systemd:
+    name: container-hello-world
+    daemon_reload: yes
+    scope: user
+    state: started
+    enabled: yes

@@ -27,6 +27,8 @@ done
 
 shift
 
+cd infra
+
 if ${DELETE_VM}; then
   (
     cd vagrant;

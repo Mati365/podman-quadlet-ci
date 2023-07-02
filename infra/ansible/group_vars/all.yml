@@ -1,0 +1,25 @@
+node_version: 20
+
+all_groups:
+  - name: webusers
+  - name: deployusers
+
+all_users:
+  - name: ci
+    groups: webusers,deployusers
+
+  - name: deploy
+    groups: deployusers,webusers,wheel
+
+  - name: web
+    groups: webusers
+
+local_paths:
+  keys: '{{ playbook_dir | dirname }}/keys'
+  ssh_keys:
+    authorized: "{{ playbook_dir | dirname }}/keys/authorized"
+
+podman:
+  volumes_path: /containers/volumes
+  registry:
+    credentials: "{{ lookup('file', '{{ playbook_dir | dirname }}/keys/podman/registry-credentials.json') | from_json }}"
