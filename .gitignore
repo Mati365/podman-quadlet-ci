@@ -59,3 +59,6 @@ build-iPhoneSimulator/
 
 id_rsa*
 registry-credentials.json
+node_modules
+dist
+.turbo

@@ -1,0 +1,42 @@
+name: Check types and lint
+
+on:
+  push:
+    branches-ignore:
+      - dev
+      - prod
+      - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-commit-check
+  cancel-in-progress: true
+
+env:
+  NODE_ENV: production
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --prefer-offline --production=false
+
+      - name: Turbo Cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ github.ref_name }}-
+
+      - run: yarn build
+      - run: yarn check:types
+      - run: yarn lint
