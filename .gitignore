@@ -62,3 +62,5 @@ registry-credentials.json
 node_modules
 dist
 .turbo
+.env
+*.key

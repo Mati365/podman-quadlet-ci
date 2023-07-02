@@ -19,3 +19,4 @@
       - rsync
       - dnsutils
       - slirp4netns
+      - dbus-user-session

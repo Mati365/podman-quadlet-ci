@@ -12,6 +12,12 @@
     append: yes
   with_items: "{{ all_users }}"
 
+- name: sudo without password for wheel group
+  copy:
+    content: '%wheel ALL=(ALL:ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/wheel-nopasswd
+    mode: 0440
+
 - name: Add SSH authorized keys to users
   include_tasks: copy-auth-keys-for-user.yml
   loop: "{{ all_users }}"
@@ -26,14 +32,6 @@
   loop: "{{ all_users }}"
   loop_control:
     loop_var: user
-
-- name: Run hosts keyscan for deploy user
-  become_user: deploy
-  shell: ssh-keyscan {{ host }} >> ~/.ssh/known_hosts
-  loop_control:
-    loop_var: host
-  loop:
-    - github.com
 
 - name: DBUS is persistent for user
   include_tasks: persistent-dbus-for-user.yml

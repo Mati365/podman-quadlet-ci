@@ -14,7 +14,7 @@
     path: "{{ podman.volumes_path }}"
     state: directory
     owner: deploy
-    group: webusers
+    group: deploy
     mode: '0770'
 
 - name: Copy registries config
@@ -22,5 +22,5 @@
     src: registries.conf.j2
     dest: /etc/containers/registries.conf
     owner: deploy
-    group: webusers
+    group: deploy
     mode: '0750'

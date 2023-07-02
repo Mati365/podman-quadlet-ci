@@ -1,5 +1,5 @@
 - name: Run Hello World app
-  become_user: web
+  become_user: deploy
   containers.podman.podman_container:
     name: hello-world
     image: nginxdemos/hello:latest
@@ -14,7 +14,7 @@
       names: true
 
 - name: Registry container must be started and enabled on systemd
-  become_user: web
+  become_user: deploy
   systemd:
     name: container-hello-world
     daemon_reload: yes

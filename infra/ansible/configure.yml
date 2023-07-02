@@ -1,3 +1,10 @@
+- hosts: localhost
+  tags: podman
+  roles:
+    - role: hetzner
+  environment:
+    HCLOUD_TOKEN: "{{ lookup('file', local_paths.keys_dir + '/hetzner/token.key') }}"
+
 - hosts: web
   gather_facts: false
   tags: facts
@@ -5,7 +12,7 @@
     - name: Wait for SSH
       wait_for_connection:
         delay: 0
-        timeout: 4000
+        timeout: 8000
 
 - hosts: web
   tags: common

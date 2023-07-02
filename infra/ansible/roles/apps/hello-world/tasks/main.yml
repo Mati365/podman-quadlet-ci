@@ -1,10 +1,9 @@
 - name: Run Hello World app
-  become_user: web
+  become_user: deploy
   containers.podman.podman_container:
     name: hello-world
     image: crccheck/hello-world
     state: started
-    user: '{{ getent_passwd.web.1 }}'
     ports:
       - 8080:8000
     generate_systemd:
@@ -14,7 +13,7 @@
       names: true
 
 - name: Podman hello-world must be started and enabled on systemd
-  become_user: web
+  become_user: deploy
   systemd:
     name: container-hello-world
     scope: user

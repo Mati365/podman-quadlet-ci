@@ -6,8 +6,8 @@
     path: "{{ item }}"
     state: directory
     owner: deploy
-    group: webusers
-    mode: "0770"
+    group: deploy
+    mode: "0774"
   loop:
     - "{{ podman.volumes_path }}/registry"
     - "{{ podman.volumes_path }}/registry/data"
@@ -18,18 +18,17 @@
     content: "{{ podman.registry.credentials.passwd }}"
     dest: "{{ podman.volumes_path }}/registry/config/htpasswd"
     owner: deploy
-    group: webusers
-    mode: "0744"
+    group: deploy
+    mode: "0644"
 
 - name: Run registry container
-  become_user: web
+  become_user: deploy
   containers.podman.podman_container:
     name: registry
     image: registry
     state: started
-    user: "{{ getent_passwd.web.1 }}"
     ports:
-      - 5000:5000
+      - 6001:5000
     generate_systemd:
       path: ~/.config/systemd/user
       restart_policy: always
@@ -44,7 +43,7 @@
       REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
 
 - name: Podman registry must be started and enabled on systemd
-  become_user: web
+  become_user: deploy
   systemd:
     name: container-registry
     scope: user
@@ -57,4 +56,3 @@
     password: "{{ podman.registry.credentials.password }}"
   with_items:
     - deploy
-    - web

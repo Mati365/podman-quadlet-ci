@@ -1,21 +1,17 @@
 node_version: 20
 
 all_groups:
-  - name: webusers
-  - name: deployusers
+  - name: wheel
 
 all_users:
-  - name: ci
-    groups: webusers,deployusers
-
   - name: deploy
-    groups: deployusers,webusers,wheel
+    groups:
 
-  - name: web
-    groups: webusers
+  - name: admin
+    groups: wheel
 
 local_paths:
-  keys: '{{ playbook_dir | dirname }}/keys'
+  keys_dir: '{{ playbook_dir | dirname }}/keys'
   ssh_keys:
     authorized: "{{ playbook_dir | dirname }}/keys/authorized"
 
